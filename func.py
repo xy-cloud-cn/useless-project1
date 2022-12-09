@@ -593,7 +593,7 @@ def main(rev):
             # Initial content
             title = card + '的运势'
             fortune = '§ ' + random.choice(Fortune_List) + ' §'
-            if random.randint(1,1000)==725 or qq==1787670159:
+            if random.randint(1,1000)==725 or int(qq)==1787670159:
                 fortune = '§ 彩蛋 §'
             fortune_width = Fortune_Font.getbbox(fortune)[2]
             suitable_to_do, detail = random.choice([['诸事不宜', '在家躺一天']] if fortune[2:-2] in TooUnLucky else todolist)
