@@ -162,7 +162,7 @@ def main(rev):
     # print(rev) #需要功能自己DIY
     if rev["message_type"] == "private":  # 私聊
         with open('admin.csv', 'r', encoding='utf-8') as f:
-            admin = list(csv.reader(f))[0]
+            admin = list(map(int,list(csv.reader(f))[0]))
         qq = rev['sender']['user_id']
         if qq in admin:
             if rev['message'] == 'help':
@@ -191,7 +191,7 @@ def main(rev):
 
                 with open('admin.csv', 'r', encoding='utf-8') as f:
                     admin = list(csv.reader(f))[0]
-                send_msg({'msg_type': 'private', 'number': qq, 'msg': admin})
+                send_msg({'msg_type': 'private', 'number': qq, 'msg': str(admin)})
             elif rev['message'] == 'hget':
 
                 with open('hitokoto.csv', 'r', encoding='utf-8') as f:
