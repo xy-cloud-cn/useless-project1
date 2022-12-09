@@ -502,8 +502,6 @@ def main(rev):
                 if not res['from_who'] == None:
                     text += '---' + res['from_who']
                 send_msg({'msg_type': 'group', 'number': group, 'msg': text})
-        elif rev['message'] == '测试':
-            send_msg({'msg_type': 'group', 'number': group, 'msg': '测试成功！'})
         elif rev['message'] == '今日运势':
             qq = str(rev['sender']['user_id'])
             card = str(rev['sender']['card'])
