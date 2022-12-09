@@ -424,6 +424,7 @@ def main(rev):
                 send_msg({'msg_type': 'group', 'number': group, 'msg': '你输入的参数数量有误哦~'})
                 return
             text=rev['message'][7:]
+            print(text)
             data = json.dumps({"message": text})
             info = requests.post(url='https://v1.gptapi.cn',
                               headers={
