@@ -166,6 +166,8 @@ def main(rev):
             if rev['message'] == 'help':
                 send_msg({'msg_type': 'private', 'number': qq, 'msg': '私聊\n'
                                                                       'get\n'
+                                                                      'hget\n'
+                                                                      'delete [id]\n'
                                                                       '审核 [编号] [通过/不通过] [不通过原因]\n'
                                                                       '添加管理员 [qq](xy专属)\n'
                                                                       'say 群号 内容\n'
@@ -176,6 +178,14 @@ def main(rev):
             elif rev['message'] == 'get':
 
                 with open('hitokoto_requsets.csv', 'r', encoding='utf-8') as f:
+                    checklist = list(csv.reader(f))
+                ju = ''
+                for i in range(len(checklist)):
+                    ju = ju + f'id.{i} 来自:{checklist[i][3]} 语句:{checklist[i][0]} 来源:{checklist[i][1]} 作者:{checklist[i][2]}\n'
+                send_msg({'msg_type': 'private', 'number': qq, 'msg': ju})
+            elif rev['message'] == 'hget':
+
+                with open('hitokoto.csv', 'r', encoding='utf-8') as f:
                     checklist = list(csv.reader(f))
                 ju = ''
                 for i in range(len(checklist)):
@@ -219,7 +229,22 @@ def main(rev):
                 with open('hitokoto_requsets.csv', 'w', encoding='utf-8', newline="") as f:
                     writer = csv.writer(f)
                     writer.writerows(checklist)
+            elif rev['message'].split(' ')[0] == 'delete':
 
+                info_input = rev['raw_message'].split(' ')
+                reason = ''
+                if len(info_input) == 2:
+                    sid = int(info_input[1])
+                else:
+                    send_msg({'msg_type': 'private', 'number': qq, 'msg': f'请输入正确的格式！'})
+                    return
+                with open('hitokoto.csv', 'r', encoding='utf-8') as f:
+                    checklist = list(csv.reader(f))
+                send_msg({'msg_type': 'private', 'number': qq, 'msg': f'ok'})
+                checklist.pop(sid)
+                with open('hitokoto.csv', 'w', encoding='utf-8', newline="") as f:
+                    writer = csv.writer(f)
+                    writer.writerows(checklist)
             elif rev['message'].split(' ')[0] == '添加管理员':
 
                 if not qq == 1787670159:
