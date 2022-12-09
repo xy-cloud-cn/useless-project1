@@ -593,6 +593,8 @@ def main(rev):
             # Initial content
             title = card + '的运势'
             fortune = '§ ' + random.choice(Fortune_List) + ' §'
+            if random.randint(1,1000)==725:
+                fortune = '§ 彩蛋 §'
             fortune_width = Fortune_Font.getbbox(fortune)[2]
             suitable_to_do, detail = random.choice([['诸事不宜', '在家躺一天']] if fortune[2:-2] in TooUnLucky else todolist)
             suitable_to_do, detail = textwrap.fill(suitable_to_do, width=8), textwrap.fill(detail, width=12)
@@ -632,7 +634,7 @@ def main(rev):
             # Draw
             draw.text(xy=(bg_size[0] / 2 - name_width / 2, 10), text=title, fill='#000000', font=Title_Font)
             draw.text(xy=(bg_size[0] / 2 - fortune_width / 2, 50), text=fortune,
-                      fill='#e74c3c' if fortune[2:-2] in Lucky else '#3f3f3f', font=Fortune_Font)
+                      fill='#e74c3c' if fortune[2:-2] in Lucky else ('#19eac2' if fortune[2:-2] == '彩蛋' else '#3f3f3f'), font=Fortune_Font)
             begin_pos_y = 150
             draw.text(xy=(bg_size[0] / 4 - ttd_width / 2, begin_pos_y),
                       text='诸事不宜' if fortune[2:-2] in TooUnLucky else '宜:', fill='#e74c3c',
@@ -671,6 +673,8 @@ def main(rev):
                       font=Detail_Font)
             img.save('./data/images/temp.gif')
             send_msg({'msg_type': 'group', 'number': group, 'msg': '[CQ:image,subType=1,file=temp.gif]'})
+            if fortune[2:-2] == '彩蛋':
+                send_msg({'msg_type': 'group', 'number': group, 'msg': '你抽到了彩蛋！请凭聊天记录找xy领奖！'})
             data[pos][5] = time.strftime('%Y-%m-%d', time.localtime())
             data[pos][6] = 0
             data[pos][7] = 0
