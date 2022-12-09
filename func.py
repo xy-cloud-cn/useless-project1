@@ -578,6 +578,7 @@ def main(rev):
             Bold_Font = './ttf/SourceHanSansCN-Bold.otf'
             Normal_Font = './ttf/SourceHanSansCN-Normal.otf'
             bg_size = (400, 350)
+            super_fortune = 0
             # 生成背景
             # Generating backgrounds
             img = Image.new('RGB', bg_size, (255, 255, 255))
@@ -593,9 +594,12 @@ def main(rev):
             # Initial content
             title = card + '的运势'
             fortune = '§ ' + random.choice(Fortune_List) + ' §'
-            if random.randint(1,1000)==725 or int(qq)==1787670159:
-                fortune = '§ 彩蛋 §'
-            fortune_width = Fortune_Font.getbbox(fortune)[2]
+            if random.randint(1,10)==7 or int(qq)==1787670159:
+                if random.randint(1,100)==25:
+                    fortune = '§ 彩蛋 §'
+                else:
+                    super_fortune=1
+            fortune_width = Fortune_Font.getbbox(('超级' if super_fortune==1 else '')+fortune)[2]
             suitable_to_do, detail = random.choice([['诸事不宜', '在家躺一天']] if fortune[2:-2] in TooUnLucky else todolist)
             suitable_to_do, detail = textwrap.fill(suitable_to_do, width=8), textwrap.fill(detail, width=12)
 
@@ -633,7 +637,7 @@ def main(rev):
             # 绘制
             # Draw
             draw.text(xy=(bg_size[0] / 2 - name_width / 2, 10), text=title, fill='#000000', font=Title_Font)
-            draw.text(xy=(bg_size[0] / 2 - fortune_width / 2, 50), text=fortune,
+            draw.text(xy=(bg_size[0] / 2 - fortune_width / 2, 50), text=('超级' if super_fortune==1 else '')+fortune,
                       fill='#e74c3c' if fortune[2:-2] in Lucky else ('#19eac2' if fortune[2:-2] == '彩蛋' else '#3f3f3f'), font=Fortune_Font)
             begin_pos_y = 150
             draw.text(xy=(bg_size[0] / 4 - ttd_width / 2, begin_pos_y),
