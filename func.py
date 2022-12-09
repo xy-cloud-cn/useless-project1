@@ -406,6 +406,7 @@ def main(rev):
 今日人品最低
 今日人品最高
 一言
+.chat [内容](这个功能较慢，请耐心等待)
 还在添加更多功能哦~'''})
 
         elif rev['message'].split(' ')[0] == '介绍':
@@ -417,6 +418,20 @@ def main(rev):
             test = test.upper()
             info = read_info(test)
             send_msg({'msg_type': 'group', 'number': group, 'msg': info})
+        elif rev['message'].split(' ')[0] == '.chat':
+            msg_id = rev['message_id']
+            if len(rev['raw_message'].split(' ')) < 2:
+                send_msg({'msg_type': 'group', 'number': group, 'msg': '你输入的参数数量有误哦~'})
+                return
+            text=rev['message'][7:]
+            data = json.dumps({"message": text})
+            info = requests.post(url='https://v1.gptapi.cn',
+                              headers={
+                                  'Content-Type': 'application/json',
+                                  'Content-Length': ''
+                              },
+                              data=data).text
+            send_msg({'msg_type': 'group', 'number': group, 'msg': f'[CQ:reply,id={msg_id}]'+info})
         elif '黑白' in rev['message']:
 
             url = re.findall('url=.*?]', rev['message'])[0][4:-1]
