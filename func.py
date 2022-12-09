@@ -161,6 +161,8 @@ def main(rev):
     random.seed(time.time())
     # print(rev) #需要功能自己DIY
     if rev["message_type"] == "private":  # 私聊
+        with open('admin.csv', 'r', encoding='utf-8') as f:
+            admin = list(csv.reader(f))[0]
         qq = rev['sender']['user_id']
         if qq in admin:
             if rev['message'] == 'help':
@@ -170,6 +172,8 @@ def main(rev):
                                                                       'delete [id]\n'
                                                                       '审核 [编号] [通过/不通过] [不通过原因]\n'
                                                                       '添加管理员 [qq](xy专属)\n'
+                                                                      '移除管理员 [id](xy专属)\n'
+                                                                      '管理员列表\n'
                                                                       'say 群号 内容\n'
                                                                       'vote 群号 qq 时间（分）\n'
                                                                       '群聊\n'
@@ -183,6 +187,11 @@ def main(rev):
                 for i in range(len(checklist)):
                     ju = ju + f'id.{i} 来自:{checklist[i][3]} 语句:{checklist[i][0]} 来源:{checklist[i][1]} 作者:{checklist[i][2]}\n'
                 send_msg({'msg_type': 'private', 'number': qq, 'msg': ju})
+            elif rev['message'] == '管理员列表':
+
+                with open('admin.csv', 'r', encoding='utf-8') as f:
+                    admin = list(csv.reader(f))[0]
+                send_msg({'msg_type': 'private', 'number': qq, 'msg': admin})
             elif rev['message'] == 'hget':
 
                 with open('hitokoto.csv', 'r', encoding='utf-8') as f:
@@ -253,8 +262,27 @@ def main(rev):
                     send_msg({'msg_type': 'private', 'number': qq, 'msg': '你输入的参数数量有误哦~'})
                     return
                 admin.append(int(rev['message'].split(' ')[1]))
+                with open('admin.csv', 'w', encoding='utf-8', newline="") as f:
+                    writer = csv.writer(f)
+                    writer.writerow(admin)
+
                 send_msg({'msg_type': 'private', 'number': qq, 'msg': 'ok'})
                 send_msg({'msg_type': 'private', 'number': int(rev['message'].split(' ')[1]), 'msg': '你被xy_cloud提升为管理员！快私聊help来看看有什么功能吧！'})
+                return
+            elif rev['message'].split(' ')[0] == '移除管理员':
+
+                if not qq == 1787670159:
+                    return
+                if len(rev['raw_message'].split(' ')) != 2:
+                    send_msg({'msg_type': 'private', 'number': qq, 'msg': '你输入的参数数量有误哦~'})
+                    return
+                admin.remove(int(rev['message'].split(' ')[1]))
+                with open('admin.csv', 'w', encoding='utf-8', newline="") as f:
+                    writer = csv.writer(f)
+                    writer.writerow(admin)
+
+                send_msg({'msg_type': 'private', 'number': qq, 'msg': 'ok'})
+                send_msg({'msg_type': 'private', 'number': int(rev['message'].split(' ')[1]), 'msg': '你被xy_cloud降级为普通成员！快私聊xy来看看你做错了什么！'})
                 return
             elif rev['message'].split(' ')[0] == 'say':
 
