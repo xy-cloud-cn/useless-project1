@@ -433,7 +433,26 @@ def main(rev):
                               },
                               data=data).text
             if info==r'{"statusCode":500,"message":"Internal server error"}':
-                send_msg({'msg_type': 'group', 'number': group, 'msg': f'[CQ:reply,id={msg_id}] api暂时无法访问！请等待一段时间后再试！'})
+                info = requests.post(url='https://v1.gptapi.cn',
+                              headers={
+                                  'Content-Type': 'application/json',
+                                  'Content-Length': ''
+                              },
+                              data=data).text
+                if info == r'{"statusCode":500,"message":"Internal server error"}':
+                    info = requests.post(url='https://v1.gptapi.cn',
+                                         headers={
+                                             'Content-Type': 'application/json',
+                                             'Content-Length': ''
+                                         },
+                                         data=data).text
+                    if info == r'{"statusCode":500,"message":"Internal server error"}':
+                        send_msg({'msg_type': 'group', 'number': group,
+                                  'msg': f'[CQ:reply,id={msg_id}] api暂时无法访问！请等待一段时间后再试！'})
+                    else:
+                        send_msg({'msg_type': 'group', 'number': group, 'msg': f'[CQ:reply,id={msg_id}]' + info})
+                else:
+                    send_msg({'msg_type': 'group', 'number': group, 'msg': f'[CQ:reply,id={msg_id}]' + info})
             else:
                 send_msg({'msg_type': 'group', 'number': group, 'msg': f'[CQ:reply,id={msg_id}]'+info})
         elif '黑白' in rev['message']:
