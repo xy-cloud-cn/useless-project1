@@ -432,7 +432,10 @@ def main(rev):
                                   'Content-Length': ''
                               },
                               data=data).text
-            send_msg({'msg_type': 'group', 'number': group, 'msg': f'[CQ:reply,id={msg_id}]'+info})
+            if info==r'{"statusCode":500,"message":"Internal server error"}':
+                send_msg({'msg_type': 'group', 'number': group, 'msg': f'[CQ:reply,id={msg_id}] api暂时无法访问！请等待一段时间后再试！'})
+            else:
+                send_msg({'msg_type': 'group', 'number': group, 'msg': f'[CQ:reply,id={msg_id}]'+info})
         elif '黑白' in rev['message']:
 
             url = re.findall('url=.*?]', rev['message'])[0][4:-1]
