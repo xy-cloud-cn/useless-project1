@@ -640,9 +640,9 @@ def main(rev):
 
             ]
             TooLucky = ['大吉', '吉你太美']
-            TooUnLucky = ['大凶']
+            TooUnLucky = ['大凶','大寄']
             Lucky = ['小吉', '中吉','吉吉国王'] + TooLucky
-            UnLucky = ['凶', '小凶'] + TooUnLucky
+            UnLucky = ['凶', '小凶','寄'] + TooUnLucky
             Fortune_List = Lucky + UnLucky
             Bold_Font = './ttf/SourceHanSansCN-Bold.otf'
             Normal_Font = './ttf/SourceHanSansCN-Normal.otf'
@@ -663,8 +663,8 @@ def main(rev):
             # Initial content
             title = card + '的运势'
             fortune = '§ ' + random.choice(Fortune_List) + ' §'
-            if random.randint(1,10)==7 or int(qq)==1787670159:
-                if random.randint(1,100)==25:
+            if random.randint(3,8)==7 or int(qq)==1787670159:
+                if random.randint(15,45)==25:
                     fortune = '§ 彩蛋 §'
                 else:
                     super_fortune=1
