@@ -25,14 +25,17 @@ from PIL import Image, ImageSequence, ImageFont, ImageDraw
 
 from receive import *
 from send import *
+
 groupid = [895105949]
 player_list = {}
 test_dict = {}
 test_answer_dict = {}
 data = []
 admin = [1787670159]
-can_exit=0
-can_update=0
+can_exit = 0
+can_update = 0
+
+# 线程控制
 def _async_raise(tid, exctype):
     """raises the exception, performs cleanup if needed"""
     tid = ctypes.c_long(tid)
@@ -52,6 +55,7 @@ def stop_thread(thread):
     _async_raise(thread.ident, SystemExit)
 
 
+# 文件管理
 def read_info(filename):
     print('./test/' + filename + '.info')
     if not os.path.exists('./test/' + filename + '.info'):
@@ -87,6 +91,39 @@ def read_answer(filename):
         return
 
 
+def read_data():
+    with open('data.csv', 'r', encoding='utf-8') as f:
+        data = list(csv.reader(f))
+    return data
+
+
+def update_data(dataz):
+    with open("data.csv", "w", encoding="utf-8", newline="") as f:
+        writer = csv.writer(f)
+        for i in dataz:
+            writer.writerow(i)
+    global data
+    data = read_data()
+
+
+# 便利函数
+def check(qq):
+    global data
+    for i in data:
+        if str(qq) == str(i[0]):
+            return
+    data.append(
+        [qq, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+    update_data(data)
+    data = read_data()
+
+def search_data(data, qq):
+    for i in range(len(data)):
+        if qq == data[i][0]:
+            return i
+    return -1
+# 功能实现
 def answer(answer, qq):
     global test_dict, player_list
     print(test_dict[player_list[qq][0]][player_list[qq][1]][(ord(answer.upper()) - 65) * 2 + 2])
@@ -124,45 +161,16 @@ def refresh_ask(qq):
               'msg': text})
 
 
-def check(qq):
-    global data
-    for i in data:
-        if str(qq) == str(i[0]):
-            return
-    data.append(
-        [qq, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
-    update_data(data)
-    data = read_data()
 
 
-def read_data():
-    with open('data.csv', 'r', encoding='utf-8') as f:
-        data = list(csv.reader(f))
-    return data
 
-
-def update_data(dataz):
-    with open("data.csv", "w", encoding="utf-8", newline="") as f:
-        writer = csv.writer(f)
-        for i in dataz:
-            writer.writerow(i)
-    global data
-    data = read_data()
-
-
-def search_data(data, qq):
-    for i in range(len(data)):
-        if qq == data[i][0]:
-            return i
-    return -1
 def main(rev):
-    global groupid, player_list, data, admin,can_exit,can_update
+    global groupid, player_list, data, admin, can_exit, can_update
     random.seed(time.time())
     # print(rev) #需要功能自己DIY
     if rev["message_type"] == "private":  # 私聊
         with open('admin.csv', 'r', encoding='utf-8') as f:
-            admin = list(map(int,list(csv.reader(f))[0]))
+            admin = list(map(int, list(csv.reader(f))[0]))
         qq = rev['sender']['user_id']
         if qq in admin:
             if rev['message'] == 'help':
@@ -267,7 +275,8 @@ def main(rev):
                     writer.writerow(admin)
 
                 send_msg({'msg_type': 'private', 'number': qq, 'msg': 'ok'})
-                send_msg({'msg_type': 'private', 'number': int(rev['message'].split(' ')[1]), 'msg': '你被xy_cloud提升为管理员！快私聊help来看看有什么功能吧！'})
+                send_msg({'msg_type': 'private', 'number': int(rev['message'].split(' ')[1]),
+                          'msg': '你被xy_cloud提升为管理员！快私聊help来看看有什么功能吧！'})
                 return
             elif rev['message'].split(' ')[0] == '移除管理员':
 
@@ -282,7 +291,8 @@ def main(rev):
                     writer.writerow(admin)
 
                 send_msg({'msg_type': 'private', 'number': qq, 'msg': 'ok'})
-                send_msg({'msg_type': 'private', 'number': int(rev['message'].split(' ')[1]), 'msg': '你被xy_cloud降级为普通成员！快私聊xy来看看你做错了什么！'})
+                send_msg({'msg_type': 'private', 'number': int(rev['message'].split(' ')[1]),
+                          'msg': '你被xy_cloud降级为普通成员！快私聊xy来看看你做错了什么！'})
                 return
             elif rev['message'].split(' ')[0] == 'say':
 
@@ -290,7 +300,8 @@ def main(rev):
                     send_msg({'msg_type': 'private', 'number': qq, 'msg': '你输入的参数数量有误哦~'})
                     return
                 send_msg({'msg_type': 'private', 'number': qq, 'msg': 'ok'})
-                send_msg({'msg_type': 'group', 'number': int(rev['message'].split(' ')[1]), 'msg': rev['message'].split(' ')[2]})
+                send_msg({'msg_type': 'group', 'number': int(rev['message'].split(' ')[1]),
+                          'msg': rev['message'].split(' ')[2]})
                 return
             elif rev['message'].split(' ')[0] == 'vote':
 
@@ -298,7 +309,8 @@ def main(rev):
                     send_msg({'msg_type': 'private', 'number': qq, 'msg': '你输入的参数数量有误哦~'})
                     return
                 send_msg({'msg_type': 'private', 'number': qq, 'msg': 'ok'})
-                group_ban(int(rev['message'].split(' ')[1]),int(rev['message'].split(' ')[2]),int(rev['message'].split(' ')[3]))
+                group_ban(int(rev['message'].split(' ')[1]), int(rev['message'].split(' ')[2]),
+                          int(rev['message'].split(' ')[3]))
                 return
         if rev['message'] == '不答了':
 
@@ -383,7 +395,7 @@ def main(rev):
                 update_data(data)
                 send_msg({'msg_type': 'group', 'number': group, 'msg': '已重置~'})
         if rev['raw_message'] == '.help':
-            send_msg({'msg_type': 'group', 'number': group, 'msg': '''可爱AI主人(指主人可爱):xy_cloud
+            send_forward(['bot','bot'], ['2907512243','2907512243'], ['''可爱AI主人(指主人可爱):xy_cloud
 私聊功能
 
 问卷 (SDS/EQ/敬请期待)
@@ -406,8 +418,11 @@ def main(rev):
 今日人品最低
 今日人品最高
 一言
-.chat [内容](这个功能较慢，请耐心等待，并且暂时不支持上下文)
-还在添加更多功能哦~'''})
+.chat [内容](这个功能较慢，请耐心等待，并且暂时不支持上下文，chatgpt任何非官方方法大部分被封禁，所以暂时用不了)
+.cat [内容](这个功能较慢，请耐心等待，并且暂时不支持上下文，chatgpt任何非官方方法大部分被封禁，所以暂时用不了)
+还在添加更多功能哦~''','''云的小工具箱❤️
+随机 [起始范围] [结束范围]
+'''])
 
         elif rev['message'].split(' ')[0] == '介绍':
 
@@ -418,27 +433,28 @@ def main(rev):
             test = test.upper()
             info = read_info(test)
             send_msg({'msg_type': 'group', 'number': group, 'msg': info})
+
         elif rev['message'].split(' ')[0] == '.chat':
             msg_id = rev['message_id']
             if len(rev['raw_message'].split(' ')) < 2:
                 send_msg({'msg_type': 'group', 'number': group, 'msg': '你输入的参数数量有误哦~'})
                 return
-            text=rev['message'][6:]
+            text = rev['message'][6:]
             print(text)
             data = json.dumps({"message": text})
             info = requests.post(url='https://v1.gptapi.cn',
-                              headers={
-                                  'Content-Type': 'application/json',
-                                  'Content-Length': ''
-                              },
-                              data=data).text
-            if info==r'{"statusCode":500,"message":"Internal server error"}':
+                                 headers={
+                                     'Content-Type': 'application/json',
+                                     'Content-Length': ''
+                                 },
+                                 data=data).text
+            if info == r'{"statusCode":500,"message":"Internal server error"}':
                 info = requests.post(url='https://v1.gptapi.cn',
-                              headers={
-                                  'Content-Type': 'application/json',
-                                  'Content-Length': ''
-                              },
-                              data=data).text
+                                     headers={
+                                         'Content-Type': 'application/json',
+                                         'Content-Length': ''
+                                     },
+                                     data=data).text
                 if info == r'{"statusCode":500,"message":"Internal server error"}':
                     info = requests.post(url='https://v1.gptapi.cn',
                                          headers={
@@ -454,7 +470,50 @@ def main(rev):
                 else:
                     send_msg({'msg_type': 'group', 'number': group, 'msg': f'[CQ:reply,id={msg_id}]' + info})
             else:
-                send_msg({'msg_type': 'group', 'number': group, 'msg': f'[CQ:reply,id={msg_id}]'+info})
+                send_msg({'msg_type': 'group', 'number': group, 'msg': f'[CQ:reply,id={msg_id}]' + info})
+        elif rev['message'].split(' ')[0] == '.cat':
+            msg_id = rev['message_id']
+            if len(rev['raw_message'].split(' ')) < 2:
+                send_msg({'msg_type': 'group', 'number': group, 'msg': '你输入的参数数量有误哦~'})
+                return
+            text = rev['message'][6:]
+            print(text)
+            data = json.dumps({"message": '你在回答的时候，每句话后面都需要加一个"喵~"'+text})
+            info = requests.post(url='https://v1.gptapi.cn',
+                                 headers={
+                                     'Content-Type': 'application/json',
+                                     'Content-Length': ''
+                                 },
+                                 data=data).text
+            if info == r'{"statusCode":500,"message":"Internal server error"}':
+                info = requests.post(url='https://v1.gptapi.cn',
+                                     headers={
+                                         'Content-Type': 'application/json',
+                                         'Content-Length': ''
+                                     },
+                                     data=data).text
+                if info == r'{"statusCode":500,"message":"Internal server error"}':
+                    info = requests.post(url='https://v1.gptapi.cn',
+                                         headers={
+                                             'Content-Type': 'application/json',
+                                             'Content-Length': ''
+                                         },
+                                         data=data).text
+                    if info == r'{"statusCode":500,"message":"Internal server error"}':
+                        send_msg({'msg_type': 'group', 'number': group,
+                                  'msg': f'[CQ:reply,id={msg_id}] api暂时无法访问！请等待一段时间后再试！'})
+                    else:
+                        send_msg({'msg_type': 'group', 'number': group, 'msg': f'[CQ:reply,id={msg_id}]' + info})
+                else:
+                    send_msg({'msg_type': 'group', 'number': group, 'msg': f'[CQ:reply,id={msg_id}]' + info})
+            else:
+                send_msg({'msg_type': 'group', 'number': group, 'msg': f'[CQ:reply,id={msg_id}]' + info})
+        elif rev['message'].split(' ')[0] == '随机':
+            msg_id = rev['message_id']
+            if not len(rev['raw_message'].split(' ')) == 3:
+                send_msg({'msg_type': 'group', 'number': group, 'msg': '你输入的参数数量有误哦~'})
+                return
+            send_msg({'msg_type': 'group', 'number': group, 'msg': f'[CQ:reply,id={msg_id}]' + str(random.randint(int(rev['message'].split(' ')[1]),int(rev['message'].split(' ')[2])))})
         elif '黑白' in rev['message']:
 
             url = re.findall('url=.*?]', rev['message'])[0][4:-1]
@@ -531,8 +590,8 @@ def main(rev):
                     elif int(data[pos][4]) == 256:
                         data[pos][4] = 3125
                     elif int(data[pos][4]) == 3125:
-                        data[pos][4] = 30*24*60-1
-                    elif not int(data[pos][4]) == 30*24*60-1:
+                        data[pos][4] = 30 * 24 * 60 - 1
+                    elif not int(data[pos][4]) == 30 * 24 * 60 - 1:
                         data[pos][4] = 27
                     update_data(data)
                     return
@@ -567,18 +626,18 @@ def main(rev):
                     yh = data[i][0]
             send_msg({'msg_type': 'group', 'number': group, 'msg': f'[CQ:at,qq={yh}]人品：{maxn}'})
         elif rev['message'] == '一言':
-            method=random.randint(1,10)
-            if method==5:
+            method = random.randint(1, 10)
+            if method == 5:
                 with open('hitokoto.csv', 'r', encoding='utf-8') as f:
                     htlist = list(csv.reader(f))
-                ht=random.choice(htlist)
+                ht = random.choice(htlist)
                 text = ''
                 text += ht[0]
                 if not ht[1] == '无':
                     text += '---' + ht[1]
                 if not ht[2] == '无':
                     text += '---' + ht[2]
-                text+=f' 群友{ht[3]}提供'
+                text += f' 群友{ht[3]}提供'
                 send_msg({'msg_type': 'group', 'number': group, 'msg': text})
 
             else:
@@ -596,8 +655,8 @@ def main(rev):
         elif rev['message'] == '今日运势':
             qq = str(rev['sender']['user_id'])
             card = str(rev['sender']['card'])
-            if card=='':
-                card=str(rev['sender']['nickname'])
+            if card == '':
+                card = str(rev['sender']['nickname'])
             msg_id = rev['message_id']
             data = read_data()
             check(qq)
@@ -662,9 +721,9 @@ def main(rev):
 
             ]
             TooLucky = ['大吉', '吉你太美']
-            TooUnLucky = ['大凶','大寄']
-            Lucky = ['小吉', '中吉','吉吉国王'] + TooLucky
-            UnLucky = ['凶', '小凶','寄'] + TooUnLucky
+            TooUnLucky = ['大凶', '大寄']
+            Lucky = ['小吉', '中吉', '吉吉国王'] + TooLucky
+            UnLucky = ['凶', '小凶', '寄'] + TooUnLucky
             Fortune_List = Lucky + UnLucky
             Bold_Font = './ttf/SourceHanSansCN-Bold.otf'
             Normal_Font = './ttf/SourceHanSansCN-Normal.otf'
@@ -685,12 +744,12 @@ def main(rev):
             # Initial content
             title = card + '的运势'
             fortune = '§ ' + random.choice(Fortune_List) + ' §'
-            if random.randint(3,8)==7 or int(qq)==1787670159:
-                if random.randint(15,45)==25:
+            if random.randint(3, 8) == 7 or int(qq) == 1787670159:
+                if random.randint(15, 45) == 25:
                     fortune = '§ 彩蛋 §'
                 else:
-                    super_fortune=1
-            fortune_width = Fortune_Font.getbbox(('超级' if super_fortune==1 else '')+fortune)[2]
+                    super_fortune = 1
+            fortune_width = Fortune_Font.getbbox(('超级' if super_fortune == 1 else '') + fortune)[2]
             suitable_to_do, detail = random.choice([['诸事不宜', '在家躺一天']] if fortune[2:-2] in TooUnLucky else todolist)
             suitable_to_do, detail = textwrap.fill(suitable_to_do, width=8), textwrap.fill(detail, width=12)
 
@@ -728,8 +787,10 @@ def main(rev):
             # 绘制
             # Draw
             draw.text(xy=(bg_size[0] / 2 - name_width / 2, 10), text=title, fill='#000000', font=Title_Font)
-            draw.text(xy=(bg_size[0] / 2 - fortune_width / 2, 50), text='§ 超级'+fortune[2:] if super_fortune==1 else fortune,
-                      fill='#e74c3c' if fortune[2:-2] in Lucky else ('#19eac2' if fortune[2:-2] == '彩蛋' else '#3f3f3f'), font=Fortune_Font)
+            draw.text(xy=(bg_size[0] / 2 - fortune_width / 2, 50),
+                      text='§ 超级' + fortune[2:] if super_fortune == 1 else fortune,
+                      fill='#e74c3c' if fortune[2:-2] in Lucky else ('#19eac2' if fortune[2:-2] == '彩蛋' else '#3f3f3f'),
+                      font=Fortune_Font)
             begin_pos_y = 150
             draw.text(xy=(bg_size[0] / 4 - ttd_width / 2, begin_pos_y),
                       text='诸事不宜' if fortune[2:-2] in TooUnLucky else '宜:', fill='#e74c3c',
