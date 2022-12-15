@@ -513,7 +513,7 @@ def main(rev):
             if not len(rev['raw_message'].split(' ')) == 3:
                 send_msg({'msg_type': 'group', 'number': group, 'msg': '你输入的参数数量有误哦~'})
                 return
-            send_msg({'msg_type': 'group', 'number': group, 'msg': f'[CQ:reply,id={msg_id}]' + str(random.randint(int(rev['message'].split(' ')[1]),int(rev['message'].split(' ')[2])))})
+            send_msg({'msg_type': 'group', 'number': group, 'msg': f'[CQ:reply,id={msg_id}]' + str(random.randint(eval(rev['message'].split(' ')[1]),eval(rev['message'].split(' ')[2])))})
         elif '黑白' in rev['message']:
 
             url = re.findall('url=.*?]', rev['message'])[0][4:-1]
