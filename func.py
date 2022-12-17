@@ -190,6 +190,8 @@ def main(rev):
                                                                       '清除签到时间\n'
                                                                       '清除今日运势时间\n'})
             elif '上传' in rev['message']:
+                if not qq == 1787670159:
+                    return
                 url = re.findall('url=.*?]', rev['message'])[0][4:-1]
                 print(url)
                 # try:
