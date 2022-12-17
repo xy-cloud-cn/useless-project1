@@ -182,12 +182,19 @@ def main(rev):
                                                                       '审核 [编号] [通过/不通过] [不通过原因]\n'
                                                                       '添加管理员 [qq](xy专属)\n'
                                                                       '移除管理员 [id](xy专属)\n'
+                                                                      '上传 [image](xy专属)\n'
                                                                       '管理员列表\n'
                                                                       'say 群号 内容\n'
                                                                       'vote 群号 qq 时间（分）\n'
                                                                       '群聊\n'
                                                                       '清除签到时间\n'
                                                                       '清除今日运势时间\n'})
+            elif '上传' in rev['message']:
+                url = re.findall('url=.*?]', rev['message'])[0][4:-1]
+                print(url)
+                # try:
+                image = Image.open(BytesIO(requests.get(url).content))
+                image.save('./data/images/help.png')
             elif rev['message'] == 'get':
 
                 with open('hitokoto_requsets.csv', 'r', encoding='utf-8') as f:
