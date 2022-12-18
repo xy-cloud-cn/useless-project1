@@ -35,7 +35,7 @@ data = []
 admin = [1787670159]
 can_exit = 0
 can_update = 0
-
+vote=''
 # 线程控制
 def _async_raise(tid, exctype):
     """raises the exception, performs cleanup if needed"""
@@ -197,6 +197,7 @@ def main(rev):
                 # try:
                 image = Image.open(BytesIO(requests.get(url).content))
                 image.save('./data/images/help.png')
+                send_msg({'msg_type': 'private', 'number': qq, 'msg': 'ok'})
             elif rev['message'] == 'get':
 
                 with open('hitokoto_requsets.csv', 'r', encoding='utf-8') as f:
@@ -319,8 +320,13 @@ def main(rev):
                     send_msg({'msg_type': 'private', 'number': qq, 'msg': '你输入的参数数量有误哦~'})
                     return
                 send_msg({'msg_type': 'private', 'number': qq, 'msg': 'ok'})
-                group_ban(int(rev['message'].split(' ')[1]), int(rev['message'].split(' ')[2]),
-                          int(rev['message'].split(' ')[3]))
+                if int(rev['message'].split(' ')[2]) in admin:
+                    send_msg({'msg_type': 'group', 'number': int(rev['message'].split(' ')[1]), 'msg': f'📢[CQ:at,qq={qq}]你不能禁言管理员！'})
+                    send_msg({'msg_type': 'group', 'number': int(rev['message'].split(' ')[1]), 'msg': f'📢[CQ:at,qq={qq}]你不能禁言管理员！'})
+                    send_msg({'msg_type': 'group', 'number': int(rev['message'].split(' ')[1]), 'msg': f'📢[CQ:at,qq={qq}]你不能禁言管理员！'})
+                else:
+                    group_ban(int(rev['message'].split(' ')[1]), int(rev['message'].split(' ')[2]),
+                              int(rev['message'].split(' ')[3]))
                 return
         if rev['message'] == '不答了':
 
