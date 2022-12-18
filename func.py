@@ -705,7 +705,16 @@ def main(rev):
                 data[pos][3] = 1
                 update_data(data)
                 return
-            renpin = random.randint(0, 100)
+            if datetime.date.today().month==4 and datetime.date.today().day==1:
+                renpin = random.randint(-100, 0)
+            elif datetime.date.today().month==11 and datetime.date.today().day==11:
+                renpin = 11
+            elif datetime.date.today().month==7 and datetime.date.today().day==25:
+                renpin = 725
+            elif datetime.date.today().month==12 and datetime.date.today().day==31:
+                renpin = 'NaN'
+            else:
+                renpin = random.randint(0, 100)
             send_msg({'msg_type': 'group', 'number': group, 'msg': f'[CQ:reply,id={msg_id}]签到成功(≧▽≦)！你今天的人品是：{renpin}'})
             data[pos][1] = time.strftime('%Y-%m-%d', time.localtime())
             data[pos][2] = renpin
