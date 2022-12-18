@@ -35,7 +35,11 @@ data = []
 admin = [1787670159]
 can_exit = 0
 can_update = 0
-vote=''
+vote=[]
+
+f3_icon = '#'
+f4_icon = '#'
+empty_icon = '-'
 # 线程控制
 def _async_raise(tid, exctype):
     """raises the exception, performs cleanup if needed"""
@@ -166,9 +170,15 @@ def refresh_ask(qq):
 
 
 def main(rev):
-    global groupid, player_list, data, admin, can_exit, can_update
+    global groupid, player_list, data, admin, can_exit, can_update,vote,f3_icon,f4_icon,empty_icon
     random.seed(time.time())
     # print(rev) #需要功能自己DIY
+    if rev["message_type"] == "meta_event" and rev['meta_event_type']=='heartbeat':# 心跳
+        if not vote==[]:
+            if time.time() - vote[0] > 60:
+                vote.clear()
+                for i in groupid:
+                    send_msg({'msg_type': 'group', 'number': i, 'msg': f'*** vote failed'})
     if rev["message_type"] == "private":  # 私聊
         with open('admin.csv', 'r', encoding='utf-8') as f:
             admin = list(map(int, list(csv.reader(f))[0]))
@@ -185,7 +195,7 @@ def main(rev):
                                                                       '上传 [image](xy专属)\n'
                                                                       '管理员列表\n'
                                                                       'say 群号 内容\n'
-                                                                      'vote 群号 qq 时间（分）\n'
+                                                                      'mute 群号 qq 时间（分）\n'
                                                                       '群聊\n'
                                                                       '清除签到时间\n'
                                                                       '清除今日运势时间\n'})
@@ -314,15 +324,13 @@ def main(rev):
                 send_msg({'msg_type': 'group', 'number': int(rev['message'].split(' ')[1]),
                           'msg': rev['message'].split(' ')[2]})
                 return
-            elif rev['message'].split(' ')[0] == 'vote':
+            elif rev['message'].split(' ')[0] == 'mute':
 
                 if len(rev['raw_message'].split(' ')) != 4:
                     send_msg({'msg_type': 'private', 'number': qq, 'msg': '你输入的参数数量有误哦~'})
                     return
                 send_msg({'msg_type': 'private', 'number': qq, 'msg': 'ok'})
                 if int(rev['message'].split(' ')[2]) in admin:
-                    send_msg({'msg_type': 'group', 'number': int(rev['message'].split(' ')[1]), 'msg': f'📢[CQ:at,qq={qq}]你不能禁言管理员！'})
-                    send_msg({'msg_type': 'group', 'number': int(rev['message'].split(' ')[1]), 'msg': f'📢[CQ:at,qq={qq}]你不能禁言管理员！'})
                     send_msg({'msg_type': 'group', 'number': int(rev['message'].split(' ')[1]), 'msg': f'📢[CQ:at,qq={qq}]你不能禁言管理员！'})
                 else:
                     group_ban(int(rev['message'].split(' ')[1]), int(rev['message'].split(' ')[2]),
@@ -389,6 +397,8 @@ def main(rev):
         qq = rev['sender']['user_id']
         nickname = str(rev['sender']['nickname'])
         card = str(rev['sender']['card'])
+        if card == '':
+            card = str(rev['sender']['nickname'])
         if not group in groupid:
             return
         if int(qq) in admin:
@@ -453,7 +463,80 @@ def main(rev):
             test = test.upper()
             info = read_info(test)
             send_msg({'msg_type': 'group', 'number': group, 'msg': info})
-
+        elif rev['message'].split(' ')[0]=='vote':
+            if len(rev['raw_message'].split(' ')) < 2 or len(rev['raw_message'].split(' ')) > 3:
+                send_msg({'msg_type': 'group', 'number': group, 'msg': '你输入的参数数量有误哦~'})
+                return
+            if not len(vote)==0:
+                if time.time()-vote[0]>60:
+                    vote.clear()
+                else:
+                    send_msg({'msg_type': 'group', 'number': group, 'msg': f'请等待当前投票结束！(还有{60-(time.time()-vote[0])}s)'})
+                    return
+            who=rev['message'].split(' ')[1]
+            if not '[CQ:at,qq=' in who:
+                send_msg({'msg_type': 'group', 'number': group, 'msg': '你输入的格式数量有误哦~请使用@'})
+                return
+            vote_qq = int(re.findall(',qq=.*?]', who)[0][4:-1])
+            vote.append(time.time())
+            vote.append(vote_qq)
+            vote.append(1)
+            vote.append(0)
+            vote.append([])
+            if len(rev['raw_message'].split(' ')) == 3:
+                vote.append(rev['message'].split(' ')[2])
+            else:
+                vote.append('')
+            send_msg({'msg_type': 'group', 'number': group, 'msg': f'\'{card}\' called for vote to mute \'[CQ:at,qq={vote[1]}]\' for 15 minutes({vote[5]})'})
+            send_msg({'msg_type': 'group', 'number': group, 'msg': f'Ban [CQ:at,qq={vote[1]} 还剩{60-(time.time()-vote[0])}秒\n'
+                                                                   f'\n'
+                                                                   f'理由:  {vote[5]}\n'
+                                                                   f'{f3_icon*(vote[2]/2)+empty_icon*(5-vote[2]/2)}|{empty_icon*(5-vote[3]/2)+f4_icon*(vote[3]/2)}\n'
+                                                                   f'f3 - 赞成 f4 - 反对'})
+        elif rev['message'].upper=='F3':
+            if not vote:
+                return
+            if time.time()-vote[0]>60:
+                vote.clear()
+                return
+            if time.time() - vote[0] > 60:
+                vote.clear()
+            if qq in vote[4]:
+                send_msg({'msg_type': 'group', 'number': group, 'msg': '你已经投过票了！'})
+                return
+            vote[4].append(qq)
+            vote[2]+=1
+            if vote[2]==10:
+                send_msg({'msg_type': 'group', 'number': group, 'msg': '*** vote passed'})
+                group_ban(group,vote[1],15)
+            else:
+                send_msg({'msg_type': 'group', 'number': group,
+                      'msg': f'Ban [CQ:at,qq={vote[1]} 还剩{60 - (time.time() - vote[0])}秒\n'
+                             f'\n'
+                             f'理由:  {vote[5]}\n'
+                             f'{f3_icon * (vote[2] / 2) + empty_icon * (5 - vote[2] / 2)}|{empty_icon * (5 - vote[3] / 2) + f4_icon * (vote[3] / 2)}\n'
+                             f'f3 - 赞成 f4 - 反对'})
+        elif rev['message'].upper=='F4':
+            if not vote:
+                return
+            if time.time()-vote[0]>60:
+                vote.clear()
+                send_msg({'msg_type': 'group', 'number': group, 'msg': f'*** vote failed'})
+                return
+            if qq in vote[4]:
+                send_msg({'msg_type': 'group', 'number': group, 'msg': '你已经投过票了！'})
+                return
+            vote[4].append(qq)
+            vote[3]+=1
+            if vote[3]==10:
+                send_msg({'msg_type': 'group', 'number': group, 'msg': '*** vote failed'})
+            else:
+                send_msg({'msg_type': 'group', 'number': group,
+                      'msg': f'Ban [CQ:at,qq={vote[1]} 还剩{60 - (time.time() - vote[0])}秒\n'
+                             f'\n'
+                             f'理由:  {vote[5]}\n'
+                             f'{f3_icon * (vote[2] / 2) + empty_icon * (5 - vote[2] / 2)}|{empty_icon * (5 - vote[3] / 2) + f4_icon * (vote[3] / 2)}\n'
+                             f'f3 - 赞成 f4 - 反对'})
         elif rev['message'].split(' ')[0] == '.chat':
             msg_id = rev['message_id']
             if len(rev['raw_message'].split(' ')) < 2:
@@ -673,10 +756,6 @@ def main(rev):
                     text += '---' + res['from_who']
                 send_msg({'msg_type': 'group', 'number': group, 'msg': text})
         elif rev['message'] == '今日运势':
-            qq = str(rev['sender']['user_id'])
-            card = str(rev['sender']['card'])
-            if card == '':
-                card = str(rev['sender']['nickname'])
             msg_id = rev['message_id']
             data = read_data()
             check(qq)
