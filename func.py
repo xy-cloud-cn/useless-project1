@@ -174,6 +174,7 @@ def main(rev):
     random.seed(time.time())
     # print(rev) #需要功能自己DIY
     if rev["message_type"] == "meta_event" and rev['meta_event_type']=='heartbeat':# 心跳
+        print('114514')
         if not vote==[]:
             if time.time() - vote[0] > 60:
                 vote.clear()
