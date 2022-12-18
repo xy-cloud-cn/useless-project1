@@ -173,14 +173,14 @@ def main(rev):
     global groupid, player_list, data, admin, can_exit, can_update,vote,f3_icon,f4_icon,empty_icon
     random.seed(time.time())
     # print(rev) #需要功能自己DIY
-    if rev["message_type"] == "meta_event" and rev['meta_event_type']=='heartbeat':# 心跳
+    if rev["post_type"] == 'meta_event':# 心跳
         print('114514')
         if not vote==[]:
             if time.time() - vote[0] > 60:
                 vote.clear()
                 for i in groupid:
                     send_msg({'msg_type': 'group', 'number': i, 'msg': f'*** vote failed'})
-    if rev["message_type"] == "private":  # 私聊
+    elif rev["message_type"] == "private":  # 私聊
         with open('admin.csv', 'r', encoding='utf-8') as f:
             admin = list(map(int, list(csv.reader(f))[0]))
         qq = rev['sender']['user_id']
