@@ -488,10 +488,10 @@ def main(rev):
             else:
                 vote.append('')
             send_msg({'msg_type': 'group', 'number': group, 'msg': f'\'{card}\' called for vote to mute \'[CQ:at,qq={vote[1]}]\' for 15 minutes({vote[5]})'})
-            send_msg({'msg_type': 'group', 'number': group, 'msg': f'Ban [CQ:at,qq={vote[1]}还剩{60-(time.time()-vote[0])}秒\n'
-                                                                   f'理由:{vote[5]}\n'
-                                                                   f'{f3_icon*(vote[2]/2)+empty_icon*(5-vote[2]/2)}|{empty_icon*(5-vote[3]/2)+f4_icon*(vote[3]/2)}\n'
-                                                                   f'f3-赞成 f4-反对'})
+            send_msg({'msg_type': 'group', 'number': group, 'msg': f'Ban [CQ:at,qq={vote[1]}还剩{60-(time.time()-vote[0])}秒\n'})
+            send_msg({'msg_type': 'group', 'number': group, 'msg': f'理由:{vote[5]}\n'})
+            send_msg({'msg_type': 'group', 'number': group, 'msg': f'{f3_icon*(vote[2]/2)+empty_icon*(5-vote[2]/2)}|{empty_icon*(5-vote[3]/2)+f4_icon*(vote[3]/2)}\n'})
+            send_msg({'msg_type': 'group', 'number': group, 'msg': f'f3-赞成 f4-反对'})
         elif rev['message'].upper=='F3':
             if not vote:
                 return
@@ -510,10 +510,13 @@ def main(rev):
                 group_ban(group,vote[1],15)
             else:
                 send_msg({'msg_type': 'group', 'number': group,
-                      'msg': f'Ban [CQ:at,qq={vote[1]} 还剩{60 - (time.time() - vote[0])}秒\n'
-                             f'理由:{vote[5]}\n'
-                             f'{f3_icon * (vote[2] / 2) + empty_icon * (5 - vote[2] / 2)}|{empty_icon * (5 - vote[3] / 2) + f4_icon * (vote[3] / 2)}\n'
-                             f'f3-赞成 f4-反对'})
+                          'msg': f'\'{card}\' called for vote to mute \'[CQ:at,qq={vote[1]}]\' for 15 minutes({vote[5]})'})
+                send_msg({'msg_type': 'group', 'number': group,
+                          'msg': f'Ban [CQ:at,qq={vote[1]}还剩{60 - (time.time() - vote[0])}秒\n'})
+                send_msg({'msg_type': 'group', 'number': group, 'msg': f'理由:{vote[5]}\n'})
+                send_msg({'msg_type': 'group', 'number': group,
+                          'msg': f'{f3_icon * (vote[2] / 2) + empty_icon * (5 - vote[2] / 2)}|{empty_icon * (5 - vote[3] / 2) + f4_icon * (vote[3] / 2)}\n'})
+                send_msg({'msg_type': 'group', 'number': group, 'msg': f'f3-赞成 f4-反对'})
         elif rev['message'].upper=='F4':
             if not vote:
                 return
