@@ -179,6 +179,7 @@ def main(rev):
                 vote.clear()
                 for i in groupid:
                     send_msg({'msg_type': 'group', 'number': i, 'msg': f'*** vote failed'})
+                    vote.clear()
     elif rev["message_type"] == "private":  # 私聊
         with open('admin.csv', 'r', encoding='utf-8') as f:
             admin = list(map(int, list(csv.reader(f))[0]))
@@ -497,8 +498,8 @@ def main(rev):
             if not vote:
                 return
             if time.time()-vote[0]>60:
-                vote.clear()
                 send_msg({'msg_type': 'group', 'number': group, 'msg': '*** vote failed'})
+                vote.clear()
                 return
             if time.time() - vote[0] > 60:
                 vote.clear()
@@ -510,6 +511,7 @@ def main(rev):
             if vote[2]==5:
                 send_msg({'msg_type': 'group', 'number': group, 'msg': '*** vote passed'})
                 group_ban(group,vote[1],15)
+                vote.clear()
             else:
                 send_msg({'msg_type': 'group', 'number': group,
                           'msg': f'Ban [CQ:at,qq={vote[1]}]还剩{60 - (time.time() - vote[0])}秒\n'
@@ -530,6 +532,7 @@ def main(rev):
             vote[3]+=1
             if vote[3]==5:
                 send_msg({'msg_type': 'group', 'number': group, 'msg': '*** vote failed'})
+                vote.clear()
             else:
                 send_msg({'msg_type': 'group', 'number': group,
                           'msg': f'Ban [CQ:at,qq={vote[1]}]还剩{60 - (time.time() - vote[0])}秒\n'
