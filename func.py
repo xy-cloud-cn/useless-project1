@@ -491,13 +491,14 @@ def main(rev):
             send_msg({'msg_type': 'group', 'number': group,
                       'msg': f'Ban [CQ:at,qq={vote[1]}]还剩{60 - (time.time() - vote[0])}秒\n'
                              f'理由:{vote[5]}\n'
-                             f'{f3_icon * (vote[2] // 2) + empty_icon * (5 - vote[2] // 2)}|{empty_icon * (5 - vote[3] // 2) + f4_icon * (vote[3] // 2)}\n'
+                             f'{f3_icon * (vote[2]) + empty_icon * (5 - vote[2])}|{empty_icon * (5 - vote[3]) + f4_icon * (vote[3])}\n'
                              f'f3-赞成 f4-反对'})
         elif rev['message'].upper()=='F3':
             if not vote:
                 return
             if time.time()-vote[0]>60:
                 vote.clear()
+                send_msg({'msg_type': 'group', 'number': group, 'msg': '*** vote failed'})
                 return
             if time.time() - vote[0] > 60:
                 vote.clear()
@@ -506,14 +507,14 @@ def main(rev):
                 return
             vote[4].append(qq)
             vote[2]+=1
-            if vote[2]==10:
+            if vote[2]==5:
                 send_msg({'msg_type': 'group', 'number': group, 'msg': '*** vote passed'})
                 group_ban(group,vote[1],15)
             else:
                 send_msg({'msg_type': 'group', 'number': group,
                           'msg': f'Ban [CQ:at,qq={vote[1]}]还剩{60 - (time.time() - vote[0])}秒\n'
                                  f'理由:{vote[5]}\n'
-                                 f'{f3_icon * (vote[2] // 2) + empty_icon * (5 - vote[2] // 2)}|{empty_icon * (5 - vote[3] // 2) + f4_icon * (vote[3] // 2)}\n'
+                                 f'{f3_icon * (vote[2]) + empty_icon * (5 - vote[2])}|{empty_icon * (5 - vote[3]) + f4_icon * (vote[3])}\n'
                                  f'f3-赞成 f4-反对'})
         elif rev['message'].upper()=='F4':
             if not vote:
@@ -527,15 +528,14 @@ def main(rev):
                 return
             vote[4].append(qq)
             vote[3]+=1
-            if vote[3]==10:
+            if vote[3]==5:
                 send_msg({'msg_type': 'group', 'number': group, 'msg': '*** vote failed'})
             else:
                 send_msg({'msg_type': 'group', 'number': group,
-                      'msg': f'Ban [CQ:at,qq={vote[1]} 还剩{60 - (time.time() - vote[0])}秒\n'
-                             f'\n'
-                             f'理由:  {vote[5]}\n'
-                             f'{f3_icon * (vote[2] / 2) + empty_icon * (5 - vote[2] / 2)}|{empty_icon * (5 - vote[3] / 2) + f4_icon * (vote[3] / 2)}\n'
-                             f'f3 - 赞成 f4 - 反对'})
+                          'msg': f'Ban [CQ:at,qq={vote[1]}]还剩{60 - (time.time() - vote[0])}秒\n'
+                                 f'理由:{vote[5]}\n'
+                                 f'{f3_icon * (vote[2]) + empty_icon * (5 - vote[2])}|{empty_icon * (5 - vote[3]) + f4_icon * (vote[3])}\n'
+                                 f'f3-赞成 f4-反对'})
         elif rev['message'].split(' ')[0] == '.chat':
             msg_id = rev['message_id']
             if len(rev['raw_message'].split(' ')) < 2:
