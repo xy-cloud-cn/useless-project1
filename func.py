@@ -192,7 +192,7 @@ def main(rev):
                                                                       'delete [id]\n'
                                                                       '审核 [编号] [通过/不通过] [不通过原因]\n'
                                                                       '添加管理员 [qq](xy专属)\n'
-                                                                      '移除管理员 [id](xy专属)\n'
+                                                                      '移除管理员 [qq](xy专属)\n'
                                                                       '上传 [image](xy专属)\n'
                                                                       '管理员列表\n'
                                                                       'say 群号 内容\n'
@@ -218,9 +218,6 @@ def main(rev):
                     ju = ju + f'id.{i} 来自:{checklist[i][3]} 语句:{checklist[i][0]} 来源:{checklist[i][1]} 作者:{checklist[i][2]}\n'
                 send_msg({'msg_type': 'private', 'number': qq, 'msg': ju})
             elif rev['message'] == '管理员列表':
-
-                with open('admin.csv', 'r', encoding='utf-8') as f:
-                    admin = list(csv.reader(f))[0]
                 send_msg({'msg_type': 'private', 'number': qq, 'msg': str(admin)})
             elif rev['message'] == 'hget':
 
