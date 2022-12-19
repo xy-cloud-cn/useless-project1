@@ -125,7 +125,7 @@ def check(qq):
 
 def search_data(data, qq):
     for i in range(len(data)):
-        if qq == data[i][0]:
+        if str(qq) == data[i][0]:
             return i
     return -1
 # 功能实现
@@ -396,7 +396,6 @@ def main(rev):
         group = rev['group_id']
         rev['raw_message'] = rev['raw_message'].replace('。', '.').strip()
         qq = rev['sender']['user_id']
-        nickname = str(rev['sender']['nickname'])
         card = str(rev['sender']['card'])
         if card == '':
             card = str(rev['sender']['nickname'])
@@ -451,6 +450,9 @@ def main(rev):
 # 一言
 # .chat [内容](这个功能较慢，请耐心等待，并且暂时不支持上下文，chatgpt任何非官方方法大部分被封禁，所以暂时用不了)
 # .cat [内容](这个功能较慢，请耐心等待，并且暂时不支持上下文，chatgpt任何非官方方法大部分被封禁，所以暂时用不了)
+# .vote [@]
+# F3
+# F4
 # 还在添加更多功能哦~''','''云的小工具箱❤️
 # 随机 [起始范围] [结束范围]
 # '''])
