@@ -219,8 +219,8 @@ def main(rev):
                 send_msg({'msg_type': 'private', 'number': qq, 'msg': ju})
             elif rev['message'] == '管理员列表':
                 with open('admin.csv', 'r', encoding='utf-8') as f:
-                    admin = list(map(int, list(csv.reader(f))[0]))
-                send_msg({'msg_type': 'private', 'number': qq, 'msg': str(admin)})
+                    admin233 = list(csv.reader(f))[0]
+                send_msg({'msg_type': 'private', 'number': qq, 'msg': str(admin233)})
             elif rev['message'] == 'hget':
 
                 with open('hitokoto.csv', 'r', encoding='utf-8') as f:
