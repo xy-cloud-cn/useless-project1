@@ -775,6 +775,10 @@ def main(rev):
             req=requests.get(f'https://api.shserve.cn/api/kugou?name={music}&b=1').text
             temp=json.loads(req)
             send_msg({'msg_type': 'group', 'number': group, 'msg': temp[0]['mp3']})
+        elif rev['message'] == 'ikun':
+            image = Image.open(BytesIO(requests.get('https:///shtool.shserve.cn/cxkapi/api/').content))
+            image.save('./data/images/temp.gif')
+            send_msg({'msg_type': 'group', 'number': group, 'msg': '[CQ:image,subType=1,file=temp.gif]'})
         elif rev['message'] == '今日运势':
             msg_id = rev['message_id']
             data = read_data()
