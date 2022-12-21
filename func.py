@@ -774,7 +774,7 @@ def main(rev):
             music=rev['message'][5:]
             req=requests.get(f'https://api.shserve.cn/api/kugou?name={music}&b=1').text
             temp=json.loads(req)
-            send_msg({'msg_type': 'group', 'number': group, 'msg': temp['mp3']})
+            send_msg({'msg_type': 'group', 'number': group, 'msg': temp[0]['mp3']})
         elif rev['message'] == '今日运势':
             msg_id = rev['message_id']
             data = read_data()
