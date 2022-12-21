@@ -767,6 +767,14 @@ def main(rev):
                 if not res['from_who'] == None:
                     text += '---' + res['from_who']
                 send_msg({'msg_type': 'group', 'number': group, 'msg': text})
+        elif rev['message'].split(' ')[0] == '音乐搜索':
+            if len(rev['message'].split(' '))==1:
+                send_msg({'msg_type': 'group', 'number': group, 'msg': '你长度戳啦'})
+                return
+            music=rev['message'][5:]
+            req=requests.get(f'https://ml.v.api.aa1.cn/music/music-api.php?msg={music}&type=json&n=1').text
+            temp=json.loads(req)
+            send_msg({'msg_type': 'group', 'number': group, 'msg': temp['url']})
         elif rev['message'] == '今日运势':
             msg_id = rev['message_id']
             data = read_data()
