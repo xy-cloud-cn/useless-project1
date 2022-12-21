@@ -774,6 +774,9 @@ def main(rev):
             music=rev['message'][5:]
             req=requests.get(f'https://ml.v.api.aa1.cn/music/music-api.php?msg={music}&type=json&n=1').text
             temp=json.loads(req)
+            if not temp['code']==200:
+                send_msg({'msg_type': 'group', 'number': group, 'msg': 'api暂时无法访问！'})
+                return
             # send_msg({'msg_type': 'group', 'number': group, 'msg': temp['url']})
             flac=requests.get(temp['url']).content
             if temp['quality']=='SQ无损':
@@ -782,7 +785,7 @@ def main(rev):
                 filename = 'temp.mp3'
             with open(filename,'wb') as f:
                 f.write(flac)
-            upload_file(group_id=group, file='./' + filename, name='temp')
+            upload_file(group_id=group, file='./' + filename, name=music)
         elif rev['message'] == '今日运势':
             msg_id = rev['message_id']
             data = read_data()
