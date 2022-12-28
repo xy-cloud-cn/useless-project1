@@ -775,10 +775,10 @@ def main(rev):
             req=requests.get(f'https://api.shserve.cn/api/kugou?name={music}&b=1').text
             temp=json.loads(req)
             send_msg({'msg_type': 'group', 'number': group, 'msg': temp[0]['mp3']})
-        elif rev['message'] == 'ikun':
-            image = Image.open(BytesIO(requests.get('https:///shtool.shserve.cn/cxkapi/api/').content))
-            image.save('./data/images/temp.gif')
-            send_msg({'msg_type': 'group', 'number': group, 'msg': '[CQ:image,subType=1,file=temp.gif]'})
+        # elif rev['message'] == 'ikun':
+        #     image = Image.open(BytesIO(requests.get('https:///shtool.shserve.cn/cxkapi/api/').content))
+        #     image.save('./data/images/temp.gif')
+        #     send_msg({'msg_type': 'group', 'number': group, 'msg': '[CQ:image,subType=1,file=temp.gif]'})
         elif rev['message'] == '今日运势':
             msg_id = rev['message_id']
             data = read_data()
@@ -821,6 +821,7 @@ def main(rev):
                 ['唱歌', '记得发群里'],
                 ['睡觉', '遇到困难呼噜噜'],
                 ['看书', '书中自有黄金屋'],
+                ['给xy打钱', '一分也是爱'],
             ]
             nottodolist = [
                 ['刷B站', '视频加载不出来'],
@@ -836,7 +837,7 @@ def main(rev):
                 ['调戏xy云', '好'],
                 ['摆烂', '我先进行一个烂的摆...寄了'],
                 ['疯狂干饭', '医院见'],
-                ['玩东方', '死在路上'],
+                ['玩东方', '死在道中'],
                 ['打音游', '乱糊'],
                 ['唱歌', '五音不全'],
                 ['睡觉', '熬夜人熬夜魂'],
