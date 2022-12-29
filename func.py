@@ -27,7 +27,7 @@ from PIL import Image, ImageSequence, ImageFont, ImageDraw
 from receive import *
 from send import *
 
-groupid = [895105949]
+groupid = [895105949,893096990]
 player_list = {}
 test_dict = {}
 test_answer_dict = {}
