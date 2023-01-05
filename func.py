@@ -727,18 +727,20 @@ def main(rev):
             minn = 999
             yh = 0
             for i in range(len(data)):
-                if int(data[i][2]) < minn and time.strftime('%Y-%m-%d', time.localtime()) == data[i][1]:
-                    minn = int(data[i][2])
-                    yh = data[i][0]
+                if time.strftime('%Y-%m-%d', time.localtime()) == data[i][1]:
+                    if int(data[i][2]) < minn:
+                        minn = int(data[i][2])
+                        yh = data[i][0]
             send_msg({'msg_type': 'group', 'number': group, 'msg': f'[CQ:at,qq={yh}]人品：{minn}'})
         elif rev['message'] == '今日人品最高':
             data = read_data()
             maxn = -999
             yh = 0
             for i in range(len(data)):
-                if int(data[i][2]) > maxn and time.strftime('%Y-%m-%d', time.localtime()) == data[i][1]:
-                    maxn = int(data[i][2])
-                    yh = data[i][0]
+                if time.strftime('%Y-%m-%d', time.localtime()) == data[i][1]:
+                    if int(data[i][2]) > maxn:
+                        maxn = int(data[i][2])
+                        yh = data[i][0]
             send_msg({'msg_type': 'group', 'number': group, 'msg': f'[CQ:at,qq={yh}]人品：{maxn}'})
         elif rev['message'] == '一言':
             method = random.randint(1, 10)
